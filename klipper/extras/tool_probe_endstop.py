@@ -18,6 +18,14 @@ if not all(hasattr(probe, attr) for attr in (
     else:
         ensure_probe_backports(probe)
 
+# Helper class to provide probe offsets interface for ToolProbeEndstop
+class ToolProbeOffsetsHelper:
+    def __init__(self, tool_probe_endstop):
+        self.tool_probe_endstop = tool_probe_endstop
+
+    def get_offsets(self, gcmd=None):
+        return self.tool_probe_endstop.get_offsets(gcmd)
+
 # Virtual endstop, using a tool attached Z probe in a toolchanger setup.
 # Tool endstop change may be done either via SET_ACTIVE_TOOL_PROBE TOOL=99
 # Or via auto-detection of single open tool probe via DETECT_ACTIVE_TOOL_PROBE

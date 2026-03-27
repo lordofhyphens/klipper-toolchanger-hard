@@ -141,6 +141,9 @@ class ProbeSessionHelper:
             raise self.printer.command_error(reason)
         # Allow axis_twist_compensation to update results
         self.printer.send_event("probe:update_results", epos)
+        # Create ProbeResult
+        offsets = self.probe_offsets.get_offsets()
+        result = manual_probe.create_probe_result(epos, offsets)
         # Report results
         gcode = self.printer.lookup_object('gcode')
         gcode.respond_info("probe at %.3f,%.3f is z=%.6f"
