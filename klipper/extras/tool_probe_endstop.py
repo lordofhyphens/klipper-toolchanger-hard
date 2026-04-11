@@ -18,21 +18,6 @@ if not all(hasattr(probe, attr) for attr in (
     else:
         ensure_probe_backports(probe)
 
-# Helper class to provide probe offsets interface for ToolProbeEndstop
-class ToolProbeOffsetsHelper:
-    def __init__(self, tool_probe_endstop):
-        self.tool_probe_endstop = tool_probe_endstop
-
-    def get_offsets(self, gcmd=None):
-        return self.tool_probe_endstop.get_offsets(gcmd)
-
-    # Support legacy Klipper versions where HomingViaProbeHelper calls this
-    def create_probe_result(self, test_pos):
-        x_offset, y_offset, z_offset = self.tool_probe_endstop.get_offsets()
-        return manual_probe.ProbeResult(
-            test_pos[0]+x_offset, test_pos[1]+y_offset,
-            test_pos[2]-z_offset, test_pos[0], test_pos[1], test_pos[2])
-
 # Virtual endstop, using a tool attached Z probe in a toolchanger setup.
 # Tool endstop change may be done either via SET_ACTIVE_TOOL_PROBE TOOL=99
 # Or via auto-detection of single open tool probe via DETECT_ACTIVE_TOOL_PROBE
@@ -102,6 +87,13 @@ class ToolProbeEndstop:
         if self.active_probe:
             return self.active_probe.get_offsets()
         return 0.0, 0.0, 0.0
+
+    # Support legacy Klipper versions where HomingViaProbeHelper calls this
+    def create_probe_result(self, test_pos):
+        x_offset, y_offset, z_offset = self.tool_probe_endstop.get_offsets()
+        return manual_probe.ProbeResult(
+            test_pos[0]+x_offset, test_pos[1]+y_offset,
+            test_pos[2]-z_offset, test_pos[0], test_pos[1], test_pos[2])
     
     def get_probe_params(self, gcmd=None):
         if self.active_probe:
